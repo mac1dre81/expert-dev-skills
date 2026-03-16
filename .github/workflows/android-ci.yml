@@ -1,0 +1,40 @@
+name: Android CI Quality Gate
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Static Analysis (Lint & Detekt)
+        run: ./gradlew lint detekt
+        # Ensures .windsurf/rules/android-arch.md is enforced
+
+      - name: Unit Tests
+        run: ./gradlew test
+        # Validates against expert-dev-skills/android-testing/SKILL.md
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Archive Lint Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-reports
+          path: app/build/reports/lint-results-debug.html
