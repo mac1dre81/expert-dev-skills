@@ -60,6 +60,10 @@ class CryptoRepositoryImpl : BaseRepository(), CryptoRepository {
         "Audio steganography placeholder for $audioPath"
     }
 
+    override suspend fun hideInImage(imagePath: String, message: String): Resource<String> = safeApiCall {
+        "Image steganography placeholder for $imagePath"
+    }
+
     /**
      * PBKDF2 Key Derivation to match JS implementation.
      */

@@ -21,4 +21,9 @@ interface CryptoRepository {
      * Hides an encrypted message inside an audio file.
      */
     suspend fun hideInAudio(audioPath: String, message: String): BaseRepository.Resource<String>
+
+    /**
+     * Hides an encrypted message inside an image file.
+     */
+    suspend fun hideInImage(imagePath: String, message: String): BaseRepository.Resource<String>
 }
