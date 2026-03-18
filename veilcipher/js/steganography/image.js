@@ -7,10 +7,8 @@
 class ImageSteganography {
   constructor() {
     this.maxMessageSize = 1024 * 1024; // 1MB limit
-    this.lsbBits = 2; // Use 2 bits per pixel for better quality
-    this.metadataFields = [
-      'UserComment', 'ImageDescription', 'Artist', 'Copyright', 'Software'
-    ];
+    this.lsbBits = 1; // Use 1 bit per channel (LSB) for better quality
+    this.metadataFields = ['UserComment', 'ImageDescription', 'Artist', 'Copyright', 'Software'];
   }
 
   /**
@@ -35,7 +33,12 @@ class ImageSteganography {
       const imageDataObj = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
       // Prepare message with header
-      const messageWithHeader = this.prepareMessage(encryptedMessage, password, canvas.width, canvas.height);
+      const messageWithHeader = this.prepareMessage(
+        encryptedMessage,
+        password,
+        canvas.width,
+        canvas.height
+      );
       const messageBytes = this.stringToBytes(messageWithHeader);
 
       // Check capacity
@@ -68,7 +71,6 @@ class ImageSteganography {
       };
 
       return result;
-
     } catch (error) {
       console.error('Image steganography failed:', error);
       return {
@@ -94,7 +96,7 @@ class ImageSteganography {
 
       // Extract from pixels
       const extractedData = this.extractFromPixels(imageDataObj);
-      
+
       if (!extractedData.success) {
         // Try extracting from metadata
         const metadataResult = await this.extractFromMetadata(imageFile);
@@ -106,7 +108,6 @@ class ImageSteganography {
 
       // Validate and decrypt
       return this.validateAndDecrypt(extractedData.message, password);
-
     } catch (error) {
       console.error('Message extraction failed:', error);
       return {
@@ -125,23 +126,23 @@ class ImageSteganography {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const url = URL.createObjectURL(file);
-      
+
       img.onload = () => {
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
-        
+
         URL.revokeObjectURL(url);
         resolve({ canvas, ctx, width: img.width, height: img.height });
       };
-      
+
       img.onerror = () => {
         URL.revokeObjectURL(url);
         reject(new Error('Failed to load image'));
       };
-      
+
       img.src = url;
     });
   }
@@ -182,15 +183,17 @@ class ImageSteganography {
 
     // Skip alpha channel (index 3, 7, 11, etc.) and start from RGB channels
     for (let i = 0; i < data.length && bitIndex < totalBits; i++) {
-      if (i % 4 === 3) continue; // Skip alpha channel
+      if (i % 4 === 3) {
+        continue;
+      } // Skip alpha channel
 
       if (byteIndex < messageBytes.length) {
         const byte = messageBytes[byteIndex];
         const bit = (byte >> (7 - (bitIndex % 8))) & 1;
-        
+
         // Clear LSB and set new bit
-        data[i] = (data[i] & 0xFE) | bit;
-        
+        data[i] = (data[i] & 0xfe) | bit;
+
         bitIndex++;
         if (bitIndex % 8 === 0) {
           byteIndex++;
@@ -208,15 +211,17 @@ class ImageSteganography {
    */
   extractFromPixels(imageData) {
     const data = imageData.data;
-    let bits = [];
+    const bits = [];
     let currentByte = 0;
     let bitCount = 0;
     let byteCount = 0;
-    let messageBytes = [];
+    const messageBytes = [];
 
     // Extract bits from LSB
     for (let i = 0; i < data.length; i++) {
-      if (i % 4 === 3) continue; // Skip alpha channel
+      if (i % 4 === 3) {
+        continue;
+      } // Skip alpha channel
 
       const bit = data[i] & 1;
       currentByte = (currentByte << 1) | bit;
@@ -245,7 +250,7 @@ class ImageSteganography {
     // Convert to string and parse
     const messageString = this.bytesToString(messageBytes);
     const delimiterIndex = messageString.indexOf('|||');
-    
+
     if (delimiterIndex === -1) {
       return { success: false, error: 'Invalid message format' };
     }
@@ -299,19 +304,12 @@ class ImageSteganography {
    * @returns {Promise<Object>} Extracted data
    */
   async extractFromMetadata(imageFile) {
-    try {
-      // Simulate metadata extraction
-      // In real implementation, use piexifjs or similar
-      return {
-        success: false,
-        error: 'Metadata extraction not implemented in this version'
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message
-      };
-    }
+    // Simulate metadata extraction
+    // In real implementation, use piexifjs or similar
+    return {
+      success: false,
+      error: 'Metadata extraction not implemented in this version'
+    };
   }
 
   /**
@@ -356,7 +354,6 @@ class ImageSteganography {
         timestamp: new Date(header.timestamp),
         imageSize: header.imageSize
       };
-
     } catch (error) {
       return {
         success: false,
@@ -394,7 +391,10 @@ class ImageSteganography {
     }
 
     if (message.length > this.maxMessageSize) {
-      return { valid: false, error: `Message too large. Maximum size: ${this.formatBytes(this.maxMessageSize)}` };
+      return {
+        valid: false,
+        error: `Message too large. Maximum size: ${this.formatBytes(this.maxMessageSize)}`
+      };
     }
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
@@ -423,7 +423,7 @@ class ImageSteganography {
     let hash = 0;
     for (let i = 0; i < password.length; i++) {
       const char = password.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString(16);
@@ -445,7 +445,9 @@ class ImageSteganography {
   }
 
   formatBytes(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

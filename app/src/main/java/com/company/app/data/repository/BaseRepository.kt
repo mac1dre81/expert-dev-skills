@@ -1,11 +1,68 @@
 package com.company.app.data.repository
 
+import java.io.IOException
+
 /**
  * 🏗️ Base Repository for expert-grade data handling.
  * Features:
  * - Resource-wrapped responses
  * - Error propagation
+ * - Coroutine support
  */
 abstract class BaseRepository {
-    // Shared repository logic
+    
+    /**
+     * Resource wrapper for handling different states of data operations
+     */
+    sealed class Resource<out T> {
+        data class Success<T>(val data: T) : Resource<T>()
+        data class Error(val message: String, val throwable: Throwable? = null) : Resource<Nothing>()
+        object Loading : Resource<Nothing>()
+    }
+    
+    /**
+     * Safe API call wrapper with error handling
+     */
+    protected suspend fun <T> safeApiCall(
+        apiCall: suspend () -> T
+    ): Resource<T> = try {
+        Resource.Success(apiCall.invoke())
+    } catch (e: Exception) {
+        handleApiError(e)
+    }
+    
+    /**
+     * Error handler with specific error types.
+     * Note: Retrofit dependency is assumed for HttpException.
+     */
+    private fun <T> handleApiError(e: Exception): Resource.Error {
+        return when (e) {
+            is IOException -> Resource.Error("Network error: ${e.message}", e)
+            // If you use Retrofit, uncomment this:
+            /*
+            is retrofit2.HttpException -> {
+                when (e.code()) {
+                    401 -> Resource.Error("Unauthorized access", e)
+                    403 -> Resource.Error("Forbidden", e)
+                    404 -> Resource.Error("Resource not found", e)
+                    in 500..599 -> Resource.Error("Server error", e)
+                    else -> Resource.Error("HTTP error: ${e.code()}", e)
+                }
+            }
+            */
+            else -> Resource.Error("Unknown error: ${e.message}", e)
+        }
+    }
+    
+    /**
+     * In-memory cache helper
+     */
+    protected class SimpleCache<K, V> {
+        private val cache = mutableMapOf<K, V>()
+        
+        fun get(key: K): V? = cache[key]
+        fun set(key: K, value: V) { cache[key] = value }
+        fun remove(key: K) { cache.remove(key) }
+        fun clear() { cache.clear() }
+    }
 }

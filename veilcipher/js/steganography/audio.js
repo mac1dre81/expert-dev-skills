@@ -8,10 +8,10 @@ class AudioSteganography {
   constructor() {
     this.maxMessageSize = 512 * 1024; // 512KB limit for audio
     this.sampleRate = 44100;
-    this.bitsPerSample = 2; // Use 2 bits per sample for quality
+    this.bitsPerSample = 1; // Use 1 bit per sample (LSB) for quality
     this.frequencyRange = {
-      low: 20,      // Hz
-      high: 18000   // Hz (inaudible range)
+      low: 20, // Hz
+      high: 18000 // Hz (inaudible range)
     };
   }
 
@@ -66,7 +66,6 @@ class AudioSteganography {
         duration: audioBuffer.duration,
         channels: audioBuffer.numberOfChannels
       };
-
     } catch (error) {
       console.error('Audio steganography failed:', error);
       return {
@@ -91,14 +90,13 @@ class AudioSteganography {
 
       // Extract from audio samples
       const extractedData = this.extractFromAudio(channelData);
-      
+
       if (!extractedData.success) {
         return extractedData;
       }
 
       // Validate and decrypt
       return this.validateAndDecrypt(extractedData.message, password);
-
     } catch (error) {
       console.error('Audio message extraction failed:', error);
       return {
@@ -118,7 +116,7 @@ class AudioSteganography {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const reader = new FileReader();
 
-      reader.onload = async (e) => {
+      reader.onload = async e => {
         try {
           const audioBuffer = await audioContext.decodeAudioData(e.target.result);
           resolve({
@@ -184,21 +182,21 @@ class AudioSteganography {
 
     for (let i = 0; i < data.length && bitIndex < totalBits; i++) {
       const sample = Math.abs(data[i]);
-      
+
       // Only modify samples above threshold
       if (sample > threshold) {
         if (byteIndex < messageBytes.length) {
           const byte = messageBytes[byteIndex];
           const bit = (byte >> (7 - (bitIndex % 8))) & 1;
-          
+
           // Convert float to integer representation for LSB manipulation
           const intSample = Math.round(sample * 32767); // Convert to 16-bit integer
-          const modifiedInt = (intSample & 0xFFFE) | bit; // Clear and set LSB
+          const modifiedInt = (intSample & 0xfffe) | bit; // Clear and set LSB
           const modifiedFloat = modifiedInt / 32767; // Convert back to float
-          
+
           // Preserve original sign
           data[i] = data[i] >= 0 ? modifiedFloat : -modifiedFloat;
-          
+
           bitIndex++;
           if (bitIndex % 8 === 0) {
             byteIndex++;
@@ -217,22 +215,22 @@ class AudioSteganography {
    */
   extractFromAudio(channelData) {
     const data = channelData;
-    let bits = [];
+    const bits = [];
     let currentByte = 0;
     let bitCount = 0;
     let byteCount = 0;
-    let messageBytes = [];
+    const messageBytes = [];
     const threshold = 0.01;
 
     // Extract bits from LSB of audio samples
     for (let i = 0; i < data.length; i++) {
       const sample = Math.abs(data[i]);
-      
+
       if (sample > threshold) {
         // Convert float to integer and extract LSB
         const intSample = Math.round(sample * 32767);
         const bit = intSample & 1;
-        
+
         currentByte = (currentByte << 1) | bit;
         bitCount++;
 
@@ -260,7 +258,7 @@ class AudioSteganography {
     // Convert to string and parse
     const messageString = this.bytesToString(messageBytes);
     const delimiterIndex = messageString.indexOf('|||');
-    
+
     if (delimiterIndex === -1) {
       return { success: false, error: 'Invalid message format in audio' };
     }
@@ -282,7 +280,7 @@ class AudioSteganography {
    * @returns {Promise<Blob>} Audio blob
    */
   async createAudioBlob(audioBuffer) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const offlineContext = new OfflineAudioContext(
         audioBuffer.numberOfChannels,
@@ -295,8 +293,8 @@ class AudioSteganography {
       source.connect(offlineContext.destination);
 
       source.start(0);
-      
-      offlineContext.startRendering().then((renderedBuffer) => {
+
+      offlineContext.startRendering().then(renderedBuffer => {
         // Convert AudioBuffer to WAV blob
         const wavBlob = this.audioBufferToWav(renderedBuffer);
         resolve(wavBlob);
@@ -314,7 +312,7 @@ class AudioSteganography {
     const sampleRate = audioBuffer.sampleRate;
     const format = 1; // PCM
     const bitDepth = 16;
-    
+
     let offset = 0;
     const buffer = new ArrayBuffer(44 + audioBuffer.length * numChannels * 2);
     const view = new DataView(buffer);
@@ -351,7 +349,7 @@ class AudioSteganography {
     for (let i = 0; i < audioBuffer.length; i++) {
       for (let channel = 0; channel < numChannels; channel++) {
         sample = Math.max(-1, Math.min(1, channels[channel][i]));
-        bytes = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+        bytes = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
         view.setInt16(offset, bytes, true);
         offset += 2;
       }
@@ -377,7 +375,7 @@ class AudioSteganography {
       }
     }
 
-    // Each usable sample can store 1 bit (using LSB)
+    // Each usable sample can store this.bitsPerSample bits (using LSB)
     const totalBits = usableSamples * this.bitsPerSample;
     return Math.floor(totalBits / 8); // Convert to bytes
   }
@@ -398,7 +396,10 @@ class AudioSteganography {
     }
 
     if (message.length > this.maxMessageSize) {
-      return { valid: false, error: `Message too large. Maximum size: ${this.formatBytes(this.maxMessageSize)}` };
+      return {
+        valid: false,
+        error: `Message too large. Maximum size: ${this.formatBytes(this.maxMessageSize)}`
+      };
     }
 
     const allowedTypes = ['audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp3'];
@@ -451,7 +452,6 @@ class AudioSteganography {
         timestamp: new Date(header.timestamp),
         audioInfo: header.audioInfo
       };
-
     } catch (error) {
       return {
         success: false,
@@ -477,7 +477,7 @@ class AudioSteganography {
     let hash = 0;
     for (let i = 0; i < password.length; i++) {
       const char = password.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return hash.toString(16);
@@ -492,7 +492,9 @@ class AudioSteganography {
   }
 
   formatBytes(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

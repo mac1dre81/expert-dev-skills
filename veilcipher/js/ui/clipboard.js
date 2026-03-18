@@ -20,16 +20,16 @@ class VeilCipherClipboard {
     try {
       // Log the operation for security monitoring
       this.logClipboardOperation('copy', context, text.length);
-      
+
       // Use modern Clipboard API
       await navigator.clipboard.writeText(text);
-      
+
       // Clear sensitive data from memory
       this.secureClear(text);
-      
+
       // Monitor for paste operations
       this.startPasteMonitoring();
-      
+
       return true;
     } catch (error) {
       console.error('Clipboard copy failed:', error);
@@ -46,13 +46,13 @@ class VeilCipherClipboard {
     try {
       // Log the operation for security monitoring
       this.logClipboardOperation('read', context, 0);
-      
+
       // Use modern Clipboard API
       const text = await navigator.clipboard.readText();
-      
+
       // Monitor for potential data leaks
       this.startLeakMonitoring(text);
-      
+
       return text;
     } catch (error) {
       console.error('Clipboard read failed:', error);
@@ -88,15 +88,15 @@ class VeilCipherClipboard {
 
     // Add security header
     const secureData = this.addSecurityHeader(encryptedData, dataType);
-    
+
     // Copy with security monitoring
     const success = await this.copyToClipboard(secureData, `encrypted-${dataType}`);
-    
+
     if (success) {
       // Schedule automatic clearing
       this.scheduleAutoClear(encryptedData, 30000); // Clear after 30 seconds
     }
-    
+
     return success;
   }
 
@@ -112,7 +112,7 @@ class VeilCipherClipboard {
 
     // Add decoy text to make it look like spam
     const decoyText = this.addDecoyText(emojiSequence);
-    
+
     return await this.copyToClipboard(decoyText, 'emoji-sequence');
   }
 
@@ -128,7 +128,7 @@ class VeilCipherClipboard {
 
     // Add tracking parameters to make it look legitimate
     const trackedURL = this.addTrackingParameters(url);
-    
+
     return await this.copyToClipboard(trackedURL, 'secure-url');
   }
 
@@ -151,13 +151,13 @@ class VeilCipherClipboard {
    */
   addDecoyText(emojiSequence) {
     const decoyMessages = [
-      "Win a FREE iPhone! Click here: 📱💎🔥",
-      "Amazing deals just for you! 🛒💰🎉",
+      'Win a FREE iPhone! Click here: 📱💎🔥',
+      'Amazing deals just for you! 🛒💰🎉',
       "You've won $1000! Claim now: 💵🎁✨",
-      "Exclusive offer inside! 🎁💝🎊",
-      "Limited time only! ⏰⚡💥"
+      'Exclusive offer inside! 🎁💝🎊',
+      'Limited time only! ⏰⚡💥'
     ];
-    
+
     const randomDecoy = decoyMessages[Math.floor(Math.random() * decoyMessages.length)];
     return `${randomDecoy}\n${emojiSequence}\n${randomDecoy}`;
   }
@@ -175,7 +175,7 @@ class VeilCipherClipboard {
       session_id: Math.random().toString(36).substr(2, 9),
       timestamp: Date.now().toString()
     });
-    
+
     const separator = url.includes('?') ? '&' : '?';
     return `${url}${separator}${params.toString()}`;
   }
@@ -189,7 +189,7 @@ class VeilCipherClipboard {
     setTimeout(async () => {
       // Verify the clipboard still contains our data
       const currentClipboard = await this.readFromClipboard('auto-clear-check');
-      
+
       if (currentClipboard.includes(data.substring(0, 50))) {
         await this.clearClipboard();
         this.logClipboardOperation('auto-clear', 'security', 0);
@@ -202,15 +202,19 @@ class VeilCipherClipboard {
    */
   startPasteMonitoring() {
     // Monitor paste events
-    document.addEventListener('paste', (e) => {
-      this.logClipboardOperation('paste-detected', 'monitoring', 0);
-      
-      // Check if paste is happening in a secure context
-      const target = e.target;
-      if (target && target.tagName === 'INPUT') {
-        this.logClipboardOperation('paste-in-input', 'security-check', 0);
-      }
-    }, { once: true });
+    document.addEventListener(
+      'paste',
+      e => {
+        this.logClipboardOperation('paste-detected', 'monitoring', 0);
+
+        // Check if paste is happening in a secure context
+        const target = e.target;
+        if (target && target.tagName === 'INPUT') {
+          this.logClipboardOperation('paste-in-input', 'security-check', 0);
+        }
+      },
+      { once: true }
+    );
   }
 
   /**
@@ -221,14 +225,14 @@ class VeilCipherClipboard {
     // Monitor for potential leaks in console
     const originalLog = console.log;
     const originalError = console.error;
-    
+
     console.log = (...args) => {
       if (args.some(arg => typeof arg === 'string' && arg.includes(data.substring(0, 10)))) {
         this.logClipboardOperation('potential-leak-console', 'security-alert', 0);
       }
       originalLog.apply(console, args);
     };
-    
+
     console.error = (...args) => {
       if (args.some(arg => typeof arg === 'string' && arg.includes(data.substring(0, 10)))) {
         this.logClipboardOperation('potential-leak-error', 'security-alert', 0);
@@ -252,18 +256,18 @@ class VeilCipherClipboard {
       userAgent: navigator.userAgent,
       sessionId: window.veilCipherApp ? window.veilCipherApp.sessionId : 'unknown'
     };
-    
+
     this.copyHistory.push(logEntry);
-    
+
     // Keep only last N entries
     if (this.copyHistory.length > this.maxHistory) {
       this.copyHistory.shift();
     }
-    
+
     // Notify security monitoring
     if (window.veilCipherApp) {
       window.veilCipherApp.showOpSecAlert(
-        `Clipboard ${operation} detected`, 
+        `Clipboard ${operation} detected`,
         this.getAlertType(operation)
       );
     }
@@ -294,14 +298,16 @@ class VeilCipherClipboard {
    * @param {string} data - Data to clear
    */
   secureClear(data) {
-    if (!data || typeof data !== 'string') return;
-    
+    if (!data || typeof data !== 'string') {
+      return;
+    }
+
     // Overwrite string with random data
     let cleared = '';
     for (let i = 0; i < data.length; i++) {
       cleared += String.fromCharCode(Math.floor(Math.random() * 256));
     }
-    
+
     // Replace original data
     data = cleared;
   }

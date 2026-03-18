@@ -5,6 +5,7 @@
 ## 🎯 Features
 
 ### Core Capabilities
+
 - **AES-256-GCM Encryption**: Military-grade encryption with authenticated encryption
 - **ECDH Key Exchange**: Elliptic Curve Diffie-Hellman for secure key exchange
 - **Multi-Carrier Steganography**: Hide data in images, audio, and text
@@ -12,12 +13,14 @@
 - **Operational Security**: Built-in monitoring and threat detection
 
 ### Steganographic Methods
+
 - **Image Steganography**: LSB (Least Significant Bit) embedding with EXIF metadata
 - **Audio Steganography**: Spectrum-based hiding in audio files
 - **Text Steganography**: Unicode zero-width character encoding
 - **Network Simulation**: Mock network traffic generation
 
 ### Security Features
+
 - **Burn After Reading**: Self-destruct capabilities for sensitive data
 - **Operational Security Monitoring**: Real-time threat detection
 - **Clipboard Security**: Secure copy/paste operations with monitoring
@@ -25,6 +28,7 @@
 - **Browser Compatibility**: Works across all modern browsers
 
 ### User Experience
+
 - **Tactical UI**: Green-on-black terminal aesthetic with professional styling
 - **Dark/Light Themes**: Professional themes for different environments
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
@@ -36,25 +40,28 @@
 ### Local Development
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd veilcipher
    ```
 
 2. **Open in browser**
+
    ```bash
    # Simply open index.html in any modern browser
    # No build process required
    ```
 
 3. **Or use a local server**
+
    ```bash
    # Python 3
    python -m http.server 8000
-   
+
    # Python 2
    python -m SimpleHTTPServer 8000
-   
+
    # Node.js (with http-server)
    npx http-server -p 8000
    ```
@@ -101,6 +108,7 @@ veilcipher/
 ## 🔧 Technical Specifications
 
 ### Cryptography
+
 - **Algorithm**: AES-256-GCM (Authenticated Encryption)
 - **Key Derivation**: PBKDF2 with SHA-256
 - **Salt**: 16 bytes, cryptographically random
@@ -111,6 +119,7 @@ veilcipher/
 ### Steganography Methods
 
 #### Image Steganography
+
 - **Method**: Least Significant Bit (LSB) embedding
 - **Channels**: RGB (Red, Green, Blue)
 - **Bit Depth**: 1 bit per channel per pixel
@@ -119,6 +128,7 @@ veilcipher/
 - **Formats**: PNG, JPEG, WebP, BMP, GIF
 
 #### Audio Steganography
+
 - **Method**: Spectrum-based hiding
 - **Sample Rate**: 44.1kHz (standard)
 - **Bit Depth**: 16-bit PCM
@@ -127,6 +137,7 @@ veilcipher/
 - **Formats**: WAV, MP3, OGG, AAC
 
 #### Text Steganography
+
 - **Method**: Unicode zero-width characters
 - **Characters**: U+200B (Zero Width Space), U+200C (Zero Width Non-Joiner), U+200D (Zero Width Joiner)
 - **Encoding**: 2-bit per character
@@ -136,6 +147,7 @@ veilcipher/
 ### Security Architecture
 
 #### Operational Security (OpSec)
+
 - **Threat Monitoring**: Real-time detection of security issues
 - **Session Management**: Automatic timeout and cleanup
 - **Browser Monitoring**: Developer tools detection
@@ -144,6 +156,7 @@ veilcipher/
 - **Memory Management**: Secure data clearing
 
 #### Browser Compatibility
+
 - **Web Crypto API**: Modern browser encryption support
 - **Canvas API**: Image processing capabilities
 - **Web Audio API**: Audio analysis and processing
@@ -153,6 +166,7 @@ veilcipher/
 ## 🛡️ Security Considerations
 
 ### Threat Model
+
 - **Network Eavesdropping**: Mitigated by client-side operation
 - **Server Compromise**: Eliminated (no server required)
 - **Data Persistence**: Burn after reading capabilities
@@ -160,6 +174,7 @@ veilcipher/
 - **Timing Attacks**: Constant-time operations where possible
 
 ### Best Practices
+
 1. **Use Strong Passwords**: 12+ characters with mixed case, numbers, and symbols
 2. **Secure Communication**: Share passwords through separate channels
 3. **Burn Sensitive Data**: Use burn bag for highly classified information
@@ -168,6 +183,7 @@ veilcipher/
 6. **Use Incognito Mode**: For maximum privacy
 
 ### Limitations
+
 - **File Size**: Large files may cause browser memory issues
 - **Browser Support**: Older browsers may have limited functionality
 - **Network Detection**: Cannot prevent all network monitoring
@@ -176,16 +192,19 @@ veilcipher/
 ## 🎨 Themes and Customization
 
 ### Dark Theme (Default)
+
 - **Aesthetic**: Green-on-black terminal style
 - **Use Case**: Low-light environments, tactical operations
 - **Features**: Glowing effects, terminal-style fonts
 
 ### Light Theme
+
 - **Aesthetic**: Professional blue theme
 - **Use Case**: Office environments, presentations
 - **Features**: Clean gradients, high contrast
 
 ### Customization
+
 - **CSS Variables**: Extensive theming system
 - **Font Options**: Multiple monospace font choices
 - **Color Schemes**: Easy color palette modification
@@ -194,6 +213,7 @@ veilcipher/
 ## 🔧 Development
 
 ### Browser Support
+
 - **Chrome**: 60+
 - **Firefox**: 55+
 - **Safari**: 11+
@@ -201,11 +221,13 @@ veilcipher/
 - **Mobile**: iOS Safari 11+, Chrome Android 60+
 
 ### Dependencies
+
 - **None**: Pure vanilla JavaScript
 - **Web APIs**: Uses standard browser APIs
 - **No Frameworks**: Lightweight and fast
 
 ### Testing
+
 - **Manual Testing**: Test across different browsers
 - **File Formats**: Test various image and audio formats
 - **Security Testing**: Verify encryption and steganography
@@ -214,16 +236,19 @@ veilcipher/
 ## 📊 Performance
 
 ### Encryption Performance
+
 - **AES-256-GCM**: ~100 MB/s on modern hardware
 - **Key Derivation**: ~1000 iterations per second
 - **Memory Usage**: ~10 MB base, scales with file size
 
 ### Steganography Performance
+
 - **Image Processing**: ~50 MB/s
 - **Audio Processing**: ~100 MB/s
 - **Text Processing**: ~10 MB/s
 
 ### Browser Limits
+
 - **File Size**: Limited by browser memory (typically 1-2 GB)
 - **Processing Time**: Limited by browser timeout (typically 30 seconds)
 - **Memory**: Limited by browser heap size
@@ -231,6 +256,7 @@ veilcipher/
 ## 🚨 Operational Security
 
 ### Monitoring Features
+
 - **Developer Tools**: Detects console and debugger usage
 - **Clipboard Activity**: Monitors copy/paste operations
 - **Network Requests**: Tracks outbound connections
@@ -238,12 +264,14 @@ veilcipher/
 - **Browser Events**: Tracks window visibility and focus
 
 ### Security Alerts
+
 - **Low**: Informational messages
 - **Medium**: Potential security issues
 - **High**: Security concerns requiring attention
 - **Critical**: Immediate security threats
 
 ### Burn Bag Features
+
 - **Secure Deletion**: Multiple overwrite passes
 - **Confirmation Required**: Prevents accidental deletion
 - **Audit Trail**: Logs all burn operations
@@ -252,6 +280,7 @@ veilcipher/
 ## 📈 Future Enhancements
 
 ### Planned Features
+
 - **Video Steganography**: Hide data in video files
 - **PDF Steganography**: Embed data in PDF documents
 - **QR Code Generation**: Visual steganography
@@ -259,6 +288,7 @@ veilcipher/
 - **Cloud Integration**: Secure cloud storage options
 
 ### Advanced Features
+
 - **Quantum Resistance**: Post-quantum cryptography
 - **AI Detection**: Machine learning-based steganalysis resistance
 - **Multi-Modal**: Combine multiple steganographic methods
@@ -267,6 +297,7 @@ veilcipher/
 ## 🤝 Contributing
 
 ### Development Guidelines
+
 1. **Security First**: Always consider security implications
 2. **Browser Compatibility**: Test across multiple browsers
 3. **Performance**: Optimize for speed and memory usage
@@ -274,6 +305,7 @@ veilcipher/
 5. **Testing**: Test thoroughly before submitting
 
 ### Code Style
+
 - **ESLint**: Follow JavaScript best practices
 - **JSDoc**: Document all functions and classes
 - **Naming**: Use clear, descriptive names
@@ -286,12 +318,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🆘 Support
 
 ### Troubleshooting
+
 - **Browser Issues**: Try incognito mode or different browser
 - **File Format Issues**: Convert files to supported formats
 - **Performance Issues**: Use smaller files or more powerful hardware
 - **Security Issues**: Check browser security settings
 
 ### Getting Help
+
 - **Documentation**: Read this README thoroughly
 - **Browser Console**: Check for JavaScript errors
 - **Security Alerts**: Pay attention to OpSec warnings
@@ -300,12 +334,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🎯 Use Cases
 
 ### Legitimate Applications
+
 - **Secure Communications**: Private messaging between trusted parties
 - **Data Backup**: Hidden backup of sensitive information
 - **Digital Rights**: Watermarking and copyright protection
 - **Forensic Analysis**: Law enforcement and security applications
 
 ### Security Research
+
 - **Steganalysis**: Research into detection methods
 - **Cryptography**: Testing encryption algorithms
 - **Security Training**: Educational purposes

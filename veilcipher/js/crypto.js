@@ -23,7 +23,7 @@ class VeilCipherCrypto {
         namedCurve: 'P-256'
       }
     };
-    
+
     this.keyCache = new Map();
     this.sessionKeys = new Map();
   }
@@ -140,7 +140,7 @@ class VeilCipherCrypto {
       const iv = await this.generateRandomBytes(this.algorithms.aesGcm.ivLength);
 
       let key;
-      
+
       if (useECDH) {
         // Use ECDH for key exchange
         const keyPair = await this.generateECDHKeyPair();
@@ -177,22 +177,20 @@ class VeilCipherCrypto {
       // Combine metadata and encrypted data
       const metadataJson = JSON.stringify(metadata);
       const metadataBytes = new TextEncoder().encode(metadataJson);
-      
-      const combinedData = new Uint8Array(
-        4 + metadataBytes.length + 4 + encryptedData.byteLength
-      );
-      
+
+      const combinedData = new Uint8Array(4 + metadataBytes.length + 4 + encryptedData.byteLength);
+
       // Add metadata length (4 bytes)
       const metadataLength = new Uint32Array([metadataBytes.length]);
       combinedData.set(new Uint8Array(metadataLength.buffer), 0);
-      
+
       // Add metadata
       combinedData.set(metadataBytes, 4);
-      
+
       // Add encrypted data length (4 bytes)
       const encryptedLength = new Uint32Array([encryptedData.byteLength]);
       combinedData.set(new Uint8Array(encryptedLength.buffer), 4 + metadataBytes.length);
-      
+
       // Add encrypted data
       combinedData.set(new Uint8Array(encryptedData), 4 + metadataBytes.length + 4);
 
@@ -202,7 +200,6 @@ class VeilCipherCrypto {
         metadata: metadata,
         key: useECDH ? keyPair : null
       };
-
     } catch (error) {
       console.error('Encryption failed:', error);
       return {
@@ -226,7 +223,7 @@ class VeilCipherCrypto {
 
       // Extract metadata length
       const metadataLength = dataView.getUint32(0, true);
-      
+
       // Extract metadata
       const metadataBytes = new Uint8Array(combinedData, 4, metadataLength);
       const metadataJson = new TextDecoder().decode(metadataBytes);
@@ -234,7 +231,7 @@ class VeilCipherCrypto {
 
       // Extract encrypted data length
       const encryptedDataLength = dataView.getUint32(4 + metadataLength, true);
-      
+
       // Extract encrypted data
       const encryptedBytes = new Uint8Array(
         combinedData,
@@ -243,7 +240,7 @@ class VeilCipherCrypto {
       );
 
       let key;
-      
+
       if (metadata.useECDH && keyPair) {
         // Use ECDH for key exchange
         key = await this.deriveSharedSecret(keyPair.privateKey, keyPair.publicKey);
@@ -269,7 +266,6 @@ class VeilCipherCrypto {
         data: new TextDecoder().decode(decryptedData),
         metadata: metadata
       };
-
     } catch (error) {
       console.error('Decryption failed:', error);
       return {
@@ -289,7 +285,7 @@ class VeilCipherCrypto {
     const hashBuffer = await crypto.subtle.digest('SHA-256', exportedKey);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    
+
     // Format as fingerprint (groups of 4 characters)
     const fingerprint = hashHex.match(/.{1,4}/g).join(' ');
     return fingerprint.toUpperCase();
@@ -307,35 +303,51 @@ class VeilCipherCrypto {
     const hasNumbers = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     const hasSpaces = /\s/.test(password);
-    
+
     let score = 0;
-    let feedback = [];
+    const feedback = [];
 
     // Length scoring
-    if (password.length >= minLength) score += 2;
-    else if (password.length >= 8) score += 1;
-    else feedback.push('Password should be at least 12 characters long');
+    if (password.length >= minLength) {
+      score += 2;
+    } else if (password.length >= 8) {
+      score += 1;
+    } else {
+      feedback.push('Password should be at least 12 characters long');
+    }
 
     // Character diversity
-    if (hasUppercase) score += 1;
-    else feedback.push('Add uppercase letters');
+    if (hasUppercase) {
+      score += 1;
+    } else {
+      feedback.push('Add uppercase letters');
+    }
 
-    if (hasLowercase) score += 1;
-    else feedback.push('Add lowercase letters');
+    if (hasLowercase) {
+      score += 1;
+    } else {
+      feedback.push('Add lowercase letters');
+    }
 
-    if (hasNumbers) score += 1;
-    else feedback.push('Add numbers');
+    if (hasNumbers) {
+      score += 1;
+    } else {
+      feedback.push('Add numbers');
+    }
 
-    if (hasSpecial) score += 2;
-    else feedback.push('Add special characters');
+    if (hasSpecial) {
+      score += 2;
+    } else {
+      feedback.push('Add special characters');
+    }
 
-    if (hasSpaces) score += 1;
+    if (hasSpaces) {
+      score += 1;
+    }
 
     // Common patterns check
-    const commonPatterns = [
-      /password/i, /123456/, /qwerty/, /admin/, /letmein/
-    ];
-    
+    const commonPatterns = [/password/i, /123456/, /qwerty/, /admin/, /letmein/];
+
     for (const pattern of commonPatterns) {
       if (pattern.test(password)) {
         score = Math.max(0, score - 2);
@@ -347,10 +359,10 @@ class VeilCipherCrypto {
     // Entropy calculation
     const uniqueChars = new Set(password).size;
     const entropy = password.length * Math.log2(uniqueChars);
-    
+
     let strength = 'weak';
     let color = '#e74c3c';
-    
+
     if (score >= 7 && entropy > 50) {
       strength = 'excellent';
       color = '#2ecc71';
@@ -384,13 +396,23 @@ class VeilCipherCrypto {
     const guessesPerSecond = 1e9; // 1 billion guesses per second
     const totalCombinations = Math.pow(2, entropy);
     const seconds = totalCombinations / (2 * guessesPerSecond);
-    
-    if (seconds < 60) return 'Less than 1 minute';
-    if (seconds < 3600) return Math.round(seconds / 60) + ' minutes';
-    if (seconds < 86400) return Math.round(seconds / 3600) + ' hours';
-    if (seconds < 31536000) return Math.round(seconds / 86400) + ' days';
-    if (seconds < 31536000000) return Math.round(seconds / 31536000) + ' years';
-    
+
+    if (seconds < 60) {
+      return 'Less than 1 minute';
+    }
+    if (seconds < 3600) {
+      return Math.round(seconds / 60) + ' minutes';
+    }
+    if (seconds < 86400) {
+      return Math.round(seconds / 3600) + ' hours';
+    }
+    if (seconds < 31536000) {
+      return Math.round(seconds / 86400) + ' days';
+    }
+    if (seconds < 31536000000) {
+      return Math.round(seconds / 31536000) + ' years';
+    }
+
     return 'Centuries';
   }
 
@@ -428,7 +450,9 @@ class VeilCipherCrypto {
    * @returns {number} Entropy score (0-8)
    */
   calculateEntropy(data) {
-    if (!data || data.length === 0) return 0;
+    if (!data || data.length === 0) {
+      return 0;
+    }
 
     const freq = {};
     for (let i = 0; i < data.length; i++) {
@@ -438,7 +462,7 @@ class VeilCipherCrypto {
 
     let entropy = 0;
     const len = data.length;
-    
+
     for (const char in freq) {
       const probability = freq[char] / len;
       entropy -= probability * Math.log2(probability);
@@ -463,7 +487,7 @@ class VeilCipherCrypto {
       // Replace with cleared data
       data = cleared;
     }
-    
+
     if (data && typeof data === 'object') {
       // Clear object properties
       for (const key in data) {
@@ -495,12 +519,13 @@ class VeilCipherCrypto {
     if (!params.password || params.password.length < 8) {
       return { valid: false, error: 'Password must be at least 8 characters' };
     }
-    
+
     if (!params.data || params.data.length === 0) {
       return { valid: false, error: 'Data cannot be empty' };
     }
-    
-    if (params.data.length > 1024 * 1024) { // 1MB limit
+
+    if (params.data.length > 1024 * 1024) {
+      // 1MB limit
       return { valid: false, error: 'Data size exceeds 1MB limit' };
     }
 

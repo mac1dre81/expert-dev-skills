@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "install",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: install",
+      "detail": "Install dependencies from package.json"
+    },
+    {
+      "type": "npm",
+      "script": "lint",
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: lint",
+      "detail": "Run ESLint to check code quality"
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: test",
+      "detail": "Run test suite"
+    },
+    {
+      "type": "npm",
+      "script": "start",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "label": "npm: start",
+      "detail": "Start local development server"
+    },
+    {
+      "type": "shell",
+      "command": "npx http-server veilcipher -p 8000 -o",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "label": "Serve veilcipher",
+      "detail": "Start local server and open browser for veilcipher app"
+    }
+  ]
+}

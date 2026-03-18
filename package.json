@@ -1,13 +1,46 @@
 {
   "name": "veil-cipher",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Professional-grade steganography suite for secure communications",
+  "main": "veilcipher/js/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx http-server veilcipher -p 8000 -o",
+    "serve": "npx http-server veilcipher -p 8000",
+    "lint": "npx eslint veilcipher/js/**/*.js",
+    "lint:fix": "npx eslint veilcipher/js/**/*.js --fix",
+    "test": "npx jest --testPathPattern=tests",
+    "test:watch": "npx jest --testPathPattern=tests --watch",
+    "format": "npx prettier --write \"veilcipher/**/*.{js,css,html,md}\"",
+    "format:check": "npx prettier --check \"veilcipher/**/*.{js,css,html,md}\""
   },
-  "keywords": [],
+  "keywords": [
+    "steganography",
+    "encryption",
+    "cryptography",
+    "security",
+    "aes-256-gcm",
+    "privacy",
+    "data-hiding"
+  ],
   "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "http-server": "^14.1.1",
+    "jest": "^29.7.0",
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "veilcipher/index.html"
 }

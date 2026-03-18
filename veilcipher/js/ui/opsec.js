@@ -10,7 +10,7 @@ class VeilCipherOpSec {
     this.securityLevel = 'HIGH';
     this.threats = new Map();
     this.monitoringActive = true;
-    
+
     this.threatPatterns = {
       screenshot: /screenshot|printscreen|prtsc/i,
       clipboard: /clipboard|copy|paste/i,
@@ -18,7 +18,7 @@ class VeilCipherOpSec {
       memory: /memory|leak|overflow/i,
       debug: /debug|console|inspect/i
     };
-    
+
     this.init();
   }
 
@@ -30,7 +30,7 @@ class VeilCipherOpSec {
     this.startSessionMonitoring();
     this.startBrowserMonitoring();
     this.startNetworkMonitoring();
-    
+
     console.log('VeilCipher OpSec: Operational Security Monitoring Active');
   }
 
@@ -44,7 +44,7 @@ class VeilCipherOpSec {
     }, 5000); // Check every 5 seconds
 
     // Monitor window events
-    window.addEventListener('beforeunload', (e) => {
+    window.addEventListener('beforeunload', e => {
       this.logThreat('session-termination', 'User attempting to close session');
     });
 
@@ -66,16 +66,20 @@ class VeilCipherOpSec {
    * Start session monitoring
    */
   startSessionMonitoring() {
-    let sessionStartTime = Date.now();
+    const sessionStartTime = Date.now();
     let lastActivity = Date.now();
-    
+
     // Monitor user activity
     const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-    
+
     activityEvents.forEach(event => {
-      document.addEventListener(event, () => {
-        lastActivity = Date.now();
-      }, { passive: true });
+      document.addEventListener(
+        event,
+        () => {
+          lastActivity = Date.now();
+        },
+        { passive: true }
+      );
     });
 
     // Check for inactivity
@@ -85,15 +89,22 @@ class VeilCipherOpSec {
       const sessionTime = now - sessionStartTime;
 
       // Check for suspicious inactivity
-      if (inactivityTime > 300000) { // 5 minutes
-        this.logThreat('prolonged-inactivity', `User inactive for ${Math.floor(inactivityTime / 60000)} minutes`);
+      if (inactivityTime > 300000) {
+        // 5 minutes
+        this.logThreat(
+          'prolonged-inactivity',
+          `User inactive for ${Math.floor(inactivityTime / 60000)} minutes`
+        );
       }
 
       // Check for suspicious session length
-      if (sessionTime > 3600000) { // 1 hour
-        this.logThreat('prolonged-session', `Session active for ${Math.floor(sessionTime / 3600000)} hours`);
+      if (sessionTime > 3600000) {
+        // 1 hour
+        this.logThreat(
+          'prolonged-session',
+          `Session active for ${Math.floor(sessionTime / 3600000)} hours`
+        );
       }
-
     }, 60000); // Check every minute
   }
 
@@ -102,9 +113,9 @@ class VeilCipherOpSec {
    */
   startBrowserMonitoring() {
     // Monitor for developer tools
-    let devtools = { open: false };
+    const devtools = { open: false };
     const threshold = 160;
-    
+
     setInterval(() => {
       if (
         window.outerHeight - window.innerHeight > threshold ||
@@ -161,13 +172,13 @@ class VeilCipherOpSec {
     // Monitor XMLHttpRequest
     const originalXHR = window.XMLHttpRequest;
     if (originalXHR) {
-      window.XMLHttpRequest = function() {
+      window.XMLHttpRequest = function () {
         const xhr = new originalXHR();
-        
+
         xhr.addEventListener('loadstart', () => {
           this.logThreat('xhr-request', `XMLHttpRequest started: ${xhr.responseURL}`);
         });
-        
+
         return xhr;
       }.bind(this);
     }
@@ -196,10 +207,10 @@ class VeilCipherOpSec {
     };
 
     // Check for suspicious DOM modifications
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
         if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach((node) => {
+          mutation.addedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const html = node.outerHTML || node.innerHTML;
               if (html && html.includes('veilcipher')) {
@@ -238,7 +249,7 @@ class VeilCipherOpSec {
 
     this.threats.set(threat.id, threat);
     this.updateSecurityLevel();
-    
+
     // Show alert if monitoring is active
     if (this.monitoringActive) {
       this.showSecurityAlert(threat);
@@ -254,10 +265,7 @@ class VeilCipherOpSec {
   showSecurityAlert(threat) {
     if (window.veilCipherApp) {
       const alertType = this.mapSeverityToAlertType(threat.severity);
-      window.veilCipherApp.showOpSecAlert(
-        `${threat.type}: ${threat.description}`,
-        alertType
-      );
+      window.veilCipherApp.showOpSecAlert(`${threat.type}: ${threat.description}`, alertType);
     }
   }
 
@@ -268,11 +276,16 @@ class VeilCipherOpSec {
    */
   mapSeverityToAlertType(severity) {
     switch (severity) {
-      case 'LOW': return 'info';
-      case 'MEDIUM': return 'warning';
-      case 'HIGH': return 'danger';
-      case 'CRITICAL': return 'critical';
-      default: return 'warning';
+      case 'LOW':
+        return 'info';
+      case 'MEDIUM':
+        return 'warning';
+      case 'HIGH':
+        return 'danger';
+      case 'CRITICAL':
+        return 'critical';
+      default:
+        return 'warning';
     }
   }
 
@@ -281,7 +294,7 @@ class VeilCipherOpSec {
    */
   updateSecurityLevel() {
     let highestSeverity = 'LOW';
-    
+
     for (const threat of this.threats.values()) {
       if (!threat.resolved) {
         if (threat.severity === 'CRITICAL') {
@@ -296,7 +309,7 @@ class VeilCipherOpSec {
     }
 
     this.securityLevel = highestSeverity;
-    
+
     // Update UI
     if (window.veilCipherApp) {
       const securityLevelEl = document.getElementById('security-level');
@@ -314,11 +327,16 @@ class VeilCipherOpSec {
    */
   getSeverityColor(severity) {
     switch (severity) {
-      case 'LOW': return '#2ecc71';
-      case 'MEDIUM': return '#f1c40f';
-      case 'HIGH': return '#e74c3c';
-      case 'CRITICAL': return '#ff0055';
-      default: return '#9aa7b2';
+      case 'LOW':
+        return '#2ecc71';
+      case 'MEDIUM':
+        return '#f1c40f';
+      case 'HIGH':
+        return '#e74c3c';
+      case 'CRITICAL':
+        return '#ff0055';
+      default:
+        return '#9aa7b2';
     }
   }
 
@@ -332,12 +350,9 @@ class VeilCipherOpSec {
       threat.resolved = true;
       threat.resolvedAt = new Date().toISOString();
       this.updateSecurityLevel();
-      
+
       if (window.veilCipherApp) {
-        window.veilCipherApp.showOpSecAlert(
-          `Threat resolved: ${threat.description}`,
-          'success'
-        );
+        window.veilCipherApp.showOpSecAlert(`Threat resolved: ${threat.description}`, 'success');
       }
     }
   }
@@ -394,7 +409,7 @@ class VeilCipherOpSec {
   performSecurityAudit() {
     const threats = this.getThreats();
     const unresolved = this.getUnresolvedThreats();
-    
+
     const audit = {
       timestamp: new Date().toISOString(),
       securityLevel: this.securityLevel,
@@ -445,25 +460,25 @@ class VeilCipherOpSec {
    */
   generateRecommendations(unresolvedThreats) {
     const recommendations = [];
-    
+
     const threatTypes = unresolvedThreats.map(t => t.type);
-    
+
     if (threatTypes.includes('developer-tools')) {
       recommendations.push('Close developer tools to prevent potential data exposure');
     }
-    
+
     if (threatTypes.includes('console-leak') || threatTypes.includes('error-leak')) {
       recommendations.push('Avoid logging sensitive data to console');
     }
-    
+
     if (threatTypes.includes('network-request')) {
       recommendations.push('Monitor and restrict network requests in secure environments');
     }
-    
+
     if (threatTypes.includes('prolonged-inactivity')) {
       recommendations.push('Enable automatic session timeout for security');
     }
-    
+
     if (threatTypes.includes('session-termination')) {
       recommendations.push('Ensure proper session cleanup on termination');
     }

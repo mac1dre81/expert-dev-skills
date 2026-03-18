@@ -1,3 +1,4 @@
 {
-    "editor.unfoldOnClickAfterEndOfLine": true
+    "editor.unfoldOnClickAfterEndOfLine": true,
+    "editor.comments.ignoreEmptyLines": true
 }
