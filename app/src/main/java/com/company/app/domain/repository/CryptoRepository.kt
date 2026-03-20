@@ -23,7 +23,17 @@ interface CryptoRepository {
     suspend fun hideInAudio(audioPath: String, message: String): BaseRepository.Resource<String>
 
     /**
+     * Extracts an encrypted message from an audio file.
+     */
+    suspend fun extractFromAudio(audioPath: String): BaseRepository.Resource<String>
+
+    /**
      * Hides an encrypted message inside an image file.
      */
     suspend fun hideInImage(imagePath: String, message: String): BaseRepository.Resource<String>
+
+    /**
+     * Extracts an encrypted message from an image file.
+     */
+    suspend fun extractFromImage(imagePath: String): BaseRepository.Resource<String>
 }

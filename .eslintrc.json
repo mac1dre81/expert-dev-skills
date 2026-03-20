@@ -1,10 +1,12 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "es2021": true,
     "node": true,
     "jest": true
   },
+  "ignorePatterns": ["node_modules/", "dist/", "build/", "coverage/"],
   "extends": "eslint:recommended",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -16,7 +18,7 @@
     "quotes": ["warn", "single"],
     "semi": ["error", "always"],
     "no-unused-vars": ["warn"],
-    "no-console": ["off"],
+    "no-console": ["warn"],
     "no-undef": ["warn"],
     "eqeqeq": ["error", "always"],
     "curly": ["warn", "all"],

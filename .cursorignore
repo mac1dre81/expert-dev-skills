@@ -1,0 +1,81 @@
+# Cursor indexing ignore list
+# (Patterns follow gitignore-style matching.)
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# VCS / local metadata
+.git/
+**/.git/
+.vs/
+**/.vs/
+*.slnx.sqlite
+
+# IDE / editors
+.idea/
+**/.idea/
+.vscode/
+**/.vscode/
+*.iml
+
+# Build outputs
+dist/
+build/
+out/
+coverage/
+.nyc_output/
+**/dist/
+**/build/
+**/out/
+**/coverage/
+**/.nyc_output/
+
+# Minified bundles
+*.min.js
+
+# Logs
+logs/
+tmp/
+temp/
+.cache/
+**/.cache/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Jest caches / reports
+.jest/
+**/.jest/
+test-results/
+**/test-results/
+
+# Android / Gradle artifacts
+**/.gradle/
+**/build/
+**/captures/
+**/externalNativeBuild/
+**/intermediates/
+**/generated/
+**/outputs/
+local.properties
+
+# Cursor/Copilot local indices (can be very large)
+**/CopilotIndices/
+**/.cursor/
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Secrets / local environment
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+# Keep common example files indexable
+!.env.example
+!.env.sample

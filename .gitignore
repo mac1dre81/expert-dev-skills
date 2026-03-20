@@ -42,9 +42,11 @@ Desktop.ini
 .jest/
 
 # Environment
+# Never commit local environment files (keep examples/indexable files)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!.env.sample
 
 # Temporary files
 tmp/
@@ -55,3 +57,22 @@ temp/
 *.bak
 *.tmp
 *.temp
+
+# Local Android/Gradle caches and build outputs
+**/.gradle/
+**/build/
+**/out/
+local.properties
+
+# Visual Studio / solution metadata
+.vs/
+*.slnx.sqlite
+
+# Android signing keys (never commit)
+*.keystore
+*.jks
+*.p12
+
+# Editor/Copilot local indices (can be very large)
+**/CopilotIndices/
+**/.cursor/

@@ -26,7 +26,7 @@ jobs:
         # Ensures .windsurf/rules/android-arch.md is enforced
 
       - name: Unit Tests
-        run: ./gradlew test
+        run: e
         # Validates against expert-dev-skills/android-testing/SKILL.md
 
       - name: Build Debug APK

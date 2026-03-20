@@ -3,7 +3,7 @@ package com.company.app.data.repository
 import java.io.IOException
 
 /**
- * 🏗️ Base Repository for expert-grade data handling.
+ * Base Repository for expert-grade data handling.
  * Features:
  * - Resource-wrapped responses
  * - Error propagation
@@ -33,23 +33,10 @@ abstract class BaseRepository {
     
     /**
      * Error handler with specific error types.
-     * Note: Retrofit dependency is assumed for HttpException.
      */
     private fun <T> handleApiError(e: Exception): Resource.Error {
         return when (e) {
             is IOException -> Resource.Error("Network error: ${e.message}", e)
-            // If you use Retrofit, uncomment this:
-            /*
-            is retrofit2.HttpException -> {
-                when (e.code()) {
-                    401 -> Resource.Error("Unauthorized access", e)
-                    403 -> Resource.Error("Forbidden", e)
-                    404 -> Resource.Error("Resource not found", e)
-                    in 500..599 -> Resource.Error("Server error", e)
-                    else -> Resource.Error("HTTP error: ${e.code()}", e)
-                }
-            }
-            */
             else -> Resource.Error("Unknown error: ${e.message}", e)
         }
     }
@@ -57,8 +44,24 @@ abstract class BaseRepository {
     /**
      * In-memory cache helper
      */
+    object GlobalCache {
+        private val caches = mutableListOf<SimpleCache<*, *>>()
+
+        fun register(cache: SimpleCache<*, *>) {
+            caches.add(cache)
+        }
+
+        fun nuke() {
+            caches.forEach { it.clear() }
+        }
+    }
+
     protected class SimpleCache<K, V> {
         private val cache = mutableMapOf<K, V>()
+        
+        init {
+            GlobalCache.register(this)
+        }
         
         fun get(key: K): V? = cache[key]
         fun set(key: K, value: V) { cache[key] = value }
