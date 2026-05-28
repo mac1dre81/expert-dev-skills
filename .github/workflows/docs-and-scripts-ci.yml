@@ -1,4 +1,4 @@
-﻿name: Docs and Scripts CI
+name: Docs and Scripts CI
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v20
