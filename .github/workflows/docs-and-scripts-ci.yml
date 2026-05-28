@@ -23,3 +23,16 @@ jobs:
         uses: ludeeus/action-shellcheck@2.0.0
         with:
           scandir: './expert-dev-skills/scripts'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate skill schema
+        run: node scripts/validate-skills.mjs
+
+      - name: Verify generated skills index is up to date
+        run: |
+          node scripts/generate-skills-index.mjs
+          git diff --exit-code SKILLS_INDEX.md
+
