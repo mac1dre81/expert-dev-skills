@@ -1,0 +1,19 @@
+﻿name: "Skill/Docs Improvement"
+description: Propose improvements to skills, references, or docs
+title: "[docs] "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is unclear, outdated, or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should be changed?
+    validations:
+      required: true

@@ -1,0 +1,19 @@
+﻿name: "CI/Quality Gate Issue"
+description: Report CI failures or quality gate gaps
+title: "[ci] "
+labels: ["ci"]
+body:
+  - type: input
+    id: workflow
+    attributes:
+      label: Workflow name
+      placeholder: e.g. docs-and-scripts-ci
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: Failure details
+      description: Paste error logs or screenshots
+    validations:
+      required: true

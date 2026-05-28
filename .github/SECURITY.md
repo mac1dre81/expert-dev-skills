@@ -1,22 +1,27 @@
-# Security Policy
+﻿# Security Policy
 
-## Reporting a vulnerability
+## Supported Scope
+This repository contains engineering skills, templates, scripts, and CI guidance.
+Security issues in scripts, workflows, or docs that could lead to unsafe usage are in scope.
 
-If you believe you have found a security vulnerability in VeilCipher, please report it responsibly:
+## Reporting a Vulnerability (Private)
+Please DO NOT open a public issue for suspected vulnerabilities.
 
-1. Open an issue in this repository describing the problem, impact, and any reproduction steps.
-2. Do not publish exploit details publicly until maintainers have confirmed the severity and coordinated a fix (if applicable).
+Instead, report privately via:
+- GitHub Security Advisories (preferred): Security tab -> Report a vulnerability
+- Or contact repository maintainers directly if advisory flow is unavailable.
 
-## What to include
+Include:
+1. Affected file(s)/path(s)
+2. Impact and severity assessment
+3. Reproduction steps / proof of concept
+4. Suggested remediation (if known)
 
-Please include:
+## Response Expectations
+- Initial triage target: within 7 days
+- Remediation timeline depends on severity and complexity
+- Coordinated disclosure is expected; avoid public disclosure before fix availability
 
-1. A clear description of the vulnerability.
-2. Affected component (e.g., browser app, Android module, encryption/steganography flows).
-3. Steps to reproduce (or a minimal proof of concept) if safe to share.
-4. Expected vs. actual behavior.
-
-## Response time
-
-There is no guaranteed response time. Maintainers will prioritize reports based on severity and impact.
-
+## Safe Harbor
+Good-faith research and responsible disclosure are appreciated.
+Do not access, modify, or destroy data you do not own.
